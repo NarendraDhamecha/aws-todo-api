@@ -16,8 +16,5 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Docker compose down
-        run: docker-compose down
-
       - name: Docker compose up
         run: docker-compose up
