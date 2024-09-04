@@ -1,36 +1,3 @@
-# name: Deploy Node Application
-
-# on:
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Source
-#         uses: actions/checkout@v4
-
-#       - name: Login to docker hub
-#         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-#       - name: Build Docker Image
-#         run: docker build -t nikhildhamecha19888/todo-node:latest .
-
-#       - name: Publish Image to docker hub
-#         run: docker push nikhildhamecha19888/todo-node:latest
-
-#   deploy:
-#     needs: build
-#     runs-on: self-hosted
-#     steps:
-#       - name: Pull image from docker hub
-#         run: docker pull nikhildhamecha19888/todo-node:latest
-
-#       - name: Run Docker Container
-#         run: docker run -d -p 4000:4000 --name todo-node-container nikhildhamecha19888/todo-node:latest
-
 name: Deploy Node Application
 
 on:
@@ -58,25 +25,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Pull Node.js image from docker hub
+      - name: Pull image from docker hub
         run: docker pull nikhildhamecha19888/todo-node:latest
 
-      - name: Pull PostgreSQL image from docker hub
-        run: docker pull postgres:13
-
-      - name: Start PostgreSQL Container
-        run: |
-          docker run -d \
-          --name postgres_db \
-          -e POSTGRES_DB=postgres \
-          -e POSTGRES_USER=postgres \
-          -e POSTGRES_PASSWORD=postgres \
-          -v postgres_data:/var/lib/postgresql/data \
-          -p 5432:5432 \
-          postgres:13
-
-      - name: Start Node.js Container
-        run: docker run -d -p 4000:4000 --name todo-node-container --link postgres_db:postgres_db nikhildhamecha19888/todo-node:latest
-
-volumes:
-  postgres_data:
+      - name: Run Docker Container
+        run: docker run -d -p 4000:4000 --name todo-node-container nikhildhamecha19888/todo-node:latest
