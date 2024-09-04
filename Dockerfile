@@ -1,7 +1,7 @@
-FROM node:alpine3.18
+FROM node:18.20.4
 WORKDIR /app
-COPY package.json ./
+COPY package*.json ./
 RUN npm install --force
 COPY . .
 EXPOSE 4000
-CMD [ "npm", "run", "dev"]
+CMD [ "npm", "start" ]
