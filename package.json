@@ -4,7 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "db:generate": "drizzle-kit generate --config drizzle.config.migration.ts",
     "db:push": "drizzle-kit push --config drizzle.config.migration.ts",
