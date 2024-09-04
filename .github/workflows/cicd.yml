@@ -31,6 +31,54 @@
 #       - name: Run Docker Container
 #         run: docker run -d -p 4000:4000 --name todo-node-container nikhildhamecha19888/todo-node:latest
 
+# name: Deploy Node Application
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Source
+#         uses: actions/checkout@v4
+
+#       - name: Login to Docker Hub
+#         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+#       - name: Build Docker Image
+#         run: docker build -t nikhildhamecha19888/todo-node:latest .
+
+#       - name: Publish Image to Docker Hub
+#         run: docker push nikhildhamecha19888/todo-node:latest
+
+#   deploy:
+#     needs: build
+#     runs-on: self-hosted
+#     steps:
+#       - name: Pull Node.js Image from Docker Hub
+#         run: docker pull nikhildhamecha19888/todo-node:latest
+
+#       - name: Pull PostgreSQL Image from Docker Hub
+#         run: docker pull postgres:13
+
+#       - name: Start PostgreSQL Container
+#         run: |
+#           docker volume create postgres_data
+#           docker run -d \
+#           --name postgres_db \
+#           -e POSTGRES_DB=postgres \
+#           -e POSTGRES_USER=postgres \
+#           -e POSTGRES_PASSWORD=postgres \
+#           -v postgres_data:/var/lib/postgresql/data \
+#           -p 5432:5432 \
+#           postgres:13
+
+#       - name: Start Node.js Container
+#         run: docker run -d -p 4000:4000 --name todo-node-container --link postgres_db:postgres_db nikhildhamecha19888/todo-node:latest
+
 name: Deploy Node Application
 
 on:
@@ -58,6 +106,20 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: Stop and Remove Existing Node.js Container
+        run: |
+          if [ "$(docker ps -q -f name=todo-node-container)" ]; then
+            docker stop todo-node-container
+            docker rm todo-node-container
+          fi
+
+      - name: Stop and Remove Existing PostgreSQL Container
+        run: |
+          if [ "$(docker ps -q -f name=postgres_db)" ]; then
+            docker stop postgres_db
+            docker rm postgres_db
+          fi
+
       - name: Pull Node.js Image from Docker Hub
         run: docker pull nikhildhamecha19888/todo-node:latest
 
